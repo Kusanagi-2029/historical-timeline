@@ -1,0 +1,47 @@
+.title {
+  position: absolute;
+  top: calc(25% - 120px);
+  left: 0;
+  gap: 55px;
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  color: #42567a;
+  font-family: 'PT Sans', sans-serif;
+  font-weight: 700;
+  font-size: 56px;
+  line-height: 67.2px;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+
+  .gradientBar {
+    width: 5px;
+    height: 120px;
+    background: linear-gradient(to bottom, #3877ee 0%, #ef5da8 100%);
+  }
+
+  .titleText {
+    width: 353px;
+    height: 134px;
+    text-align: left;
+  }
+}
+
+.gradientBarMobile {
+  display: none;
+}
+
+.titleMobile {
+  width: 123px;
+  height: 48px;
+  position: absolute;
+  top: 10%;
+  left: 20px;
+  text-align: left;
+  font-family: 'PT Sans', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+  color: #42567a;
+}

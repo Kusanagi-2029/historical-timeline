@@ -1,0 +1,16 @@
+.App {
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
+&::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+&::-webkit-scrollbar-thumb {
+  border-radius: 12px;
+
+  background: rgb(66, 86, 122);
+  background: linear-gradient(180deg, rgba(66, 86, 122, 1) 0%, rgba(93, 95, 239, 1) 35%, rgba(239, 93, 168, 1) 100%);
+}
