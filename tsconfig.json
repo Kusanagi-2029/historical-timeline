@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es5",
+  "baseUrl": "./src",
+  "paths": {
+    "@/*": ["./src"]
+  },
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
+    "noUnusedLocals": false,
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -13,14 +17,25 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
+    "module": "CommonJS",
+    "target": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "removeComments": true, // Удаление комментариев для уменьшения размера
+    "declaration": false, // Отключение генерации .d.ts файлов
+    "noImplicitAny": true, // Запрет использования any без явного указания
+    "downlevelIteration": true, // Поддержка итерации для ES5
+    "noUnusedParameters": true, // Отключение неиспользуемых параметров
+    "noImplicitReturns": true, // Обеспечение явных возвратов функций
+    "sourceMap": false, // Отключение source maps для более легких файлов
+    "inlineSourceMap": false, // Отключение встроенных source maps
+    "inlineSources": false, // Отключение встроенных исходников
+    "emitDecoratorMetadata": false, // Отключение метаданных для декораторов
+    "experimentalDecorators": false // Отключение поддержки экспериментальных декораторов
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src/**/*", "eslint.config.mjs"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

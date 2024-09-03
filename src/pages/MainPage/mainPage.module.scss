@@ -1,0 +1,22 @@
+.mainPage,
+.mainPageMobile,
+.threeBlocksPage {
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  position: relative;
+}
+
+.mainPageMobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+}
+
+.toMainPageButton {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  z-index: 4;
+}

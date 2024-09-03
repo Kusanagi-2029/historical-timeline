@@ -1,46 +1,242 @@
-# Getting Started with Create React App
+# historical-timeline - Приложение для отрисовки временных отрезков и слайдера
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- [Описание проекта](#описание-проекта)
+  - [Технологии](#технологии)
+  - [Скрипты](#скрипты)
+  - [DEMO](#demo)
+    - [DEMO](#demo)
+    - [Видео](#видео)
+    - [Анимация](#анимация)
+      - [TimelineContainer](#timelinecontainer)
+      - [updateDatesWithAnimation](#updatedateswithanimation)
+    - [Прочее](#прочее)
+- [Установка и запуск](#установка-и-запуск)
+- [Архитектура проекта](#архитектура-проекта)
+  - [Структура директорий](#структура-директорий)
+  - [Модульная архитектура](#модульная-архитектура)
+  - [Container-presenter pattern](#container-presenter-pattern)
 
-## Available Scripts
+## Описание проекта
 
-In the project directory, you can run:
+## Технологии
+
+● Использованы:
+
+- Typescript
+- React.js
+- SCSS-стили
+- Сборка проекта с помощью Webpack
+- Библиотека Swiper - для слайдера
+- Для реализации js-анимаций были использованы ts и scss
+- Линтер ESLint - для code conventions
+- Prettier - для форматирования
+- Yarn
+- Библиотека react-router-dom - для роутинга
+- Библиотека @babel/plugin-proposal-private-property-in-object - для babel и webpack
+
+● Не были использованы:
+
+- JQuery
+- Bootstrap, Tailwind и т.п.
+- Библиотеки UI-компонентов - MaterialUI, AntDesign и т.п.
+
+## Скрипты
+
+### `yarn install`
+
+Установка зависимостей
 
 ### `yarn start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```bash
+yarn install
+yarn start
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Приложение запустится на [http://localhost:3000](http://localhost:3000)
 
 ### `yarn build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+yarn build
+yarn add -g serve
+serve -s build
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Билд запустится на [http://localhost:3000](http://localhost:3000)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### `yarn test`
+
+Запуск тестов приложения
 
 ### `yarn eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+> [!CAUTION]
+> Это неотвратимая операция `eject`!
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### DEMO
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### Видео
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Анимация
 
-## Learn More
+в компоненте `TimelineContainer` реализована анимация, которая включает в себя:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Плавное изменение значений дат с помощью функции `updateDatesWithAnimation`.
+- Изменение стилей кругов и текстов, связанных с временными отрезками, для визуального обозначения активного периода.
+- Взаимодействие с пользователем через обработчики событий, которые добавляют динамику при наведении курсора.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### TimelineContainer
+
+1. **Обновление дат с анимацией**:
+
+   - Функция `updateDatesWithAnimation` вызывается внутри эффекта `useEffect`, когда активный период изменяется. Эта функция отвечает за плавное изменение значений начальной и конечной дат временного отрезка.
+   - Анимация осуществляется путем постепенного изменения значений `startDate` и `endDate` от текущих значений до новых значений, полученных из данных о периоде.
+   - Каждое обновление значений происходит с интервалом в 20 миллисекунд, что создает эффект анимации.
+
+2. **Изменение стилей элементов**:
+
+   - Внутри `useEffect` происходит изменение стилей для кружков и текстов, связанных с временными отрезками:
+     - Кружки, представляющие временные отрезки, изменяют радиус (`r`) в зависимости от того, активен ли соответствующий период. Если период активен, радиус кружка увеличивается до `16`, в противном случае устанавливается в `2`.
+     - Тексты, связанные с временными отрезками, изменяют свою непрозрачность (`opacity`) в зависимости от того, активен ли период. Если период активен, непрозрачность текста устанавливается в `1`, в противном случае — в `0`.
+
+3. **Обработчики событий наведения мыши**:
+   - Обработчики `handleMouseEnter` и `handleMouseLeave` добавляют дополнительную анимацию при наведении курсора на кружки:
+     - При наведении на кружок его радиус увеличивается, а текст становится видимым.
+     - При уходе курсора радиус кружка возвращается к исходному значению, а текст становится невидимым.
+
+Да, в функции `updateDatesWithAnimation` реализована анимация изменения дат. Давайте подробно рассмотрим, как работает эта анимация.
+
+### updateDatesWithAnimation
+
+1. **Извлечение года из строки даты**:
+
+   - Вспомогательная функция `parseYear` извлекает год из строки даты. Если строка не является числом, возвращается 0.
+
+2. **Инициализация текущих и целевых значений дат**:
+
+   - Переменные `currentStartYear` и `currentEndYear` хранят текущие значения начальной и конечной дат соответственно.
+   - Переменные `targetStartYear` и `targetEndYear` содержат целевые значения начальной и конечной дат.
+
+3. **Установка интервала обновления**:
+
+   - Переменная `updateInterval` устанавливает интервал между обновлениями анимации в миллисекундах.
+
+4. **Запуск интервала анимации**:
+   - Функция `setInterval` запускает таймер, который будет вызываться каждые `updateInterval` миллисекунд.
+   - Внутри интервала происходит обновление текущих значений дат в зависимости от целевых значений:
+     - Если `currentStartYear` не равен `targetStartYear`, он увеличивается или уменьшается на 1 в зависимости от того, меньше или больше текущее значение по сравнению с целевым.
+     - Если `currentEndYear` не равен `targetEndYear`, он также увеличивается или уменьшается на 1 в зависимости от соотношения с целевым значением.
+     - Функции `setStartDate` и `setEndDate` вызываются для обновления значений начальной и конечной дат соответственно.
+   - Когда `currentStartYear` становится равным `targetStartYear` и `currentEndYear` становится равным `targetEndYear`, интервал останавливается с помощью `clearInterval`.
+
+### Прочее
+
+#### Отключение zoom'a при двойном тапе в мобильном устройстве:
+
+`touch-action: manipulation;`
+
+#### Подключение шрифта Bebas Neue:
+
+1. 1-ый способ Подключения шрифта Bebas Neue - в index.html
+ <!-- <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&display=swap" rel="stylesheet">
+-->
+2. 2-ой способ Подключения шрифта Bebas Neue - через import в CSS-файл напрямую
+   `@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&display=swap');`
+
+3. 3-ий способ Подключения шрифта Bebas Neue - через import в CSS/SCSS-файл и подключение его к входной точке проекта - `src/index.js` или `src/App.js`:
+
+   ```scss
+   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&display=swap');
+   ```
+
+   ```tsx
+   import './shared/styles/fonts.scss';
+
+   // Замените на путь к вашему файлу стилей
+   ```
+
+4. 4-ый способ Подключения шрифта Bebas Neue - импорт из другого css/scss-файла
+   Установить файл в проект:
+   `afternpm install @fontsource/bebas-neue`
+
+   ```tsx
+   import '@fontsource/bebas-neue';
+
+   // Импортируйте шрифт в ваш JS/JSX файл
+   ```
+
+5. 5-ый способ - прямой импорт из другого CSS|SCSS;
+   `@import '/src/shared/styles/fonts.scss';`
+
+   Но должны быть настроены Webpack и tsconfig:
+
+```js
+// webpack.config.js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
+    ],
+  },
+};
+```
+
+```js
+// tsconfig.json
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"]
+    }
+  }
+}
+
+```
+
+### Видео
+
+Для демонстрации изолированности логики и вёрстки одинаковых блоков компонента был введён компонент страницы `threeBlocksPage`, на которую можно перейти по кнопке "На 3 блока" или по адресу приложения /3.
+
+```tsx
+/**
+ * Компонент страницы с Тремя блоками временных отрезков для демонстрации изолированности их логики и вёрстки
+ */
+const threeBlocksPage: React.FC = () => {
+  const navigate = useNavigate();
+
+  /** Обработчик навигации */
+  const handleNavigate = (path: string) => {
+    navigate(path);
+  };
+  return (
+    <div className={styles.threeBlocksPage}>
+      <div className={styles.toMainPageButton}>
+        <NavButton text="На Главную" onClick={() => handleNavigate('/')} />
+      </div>
+      <TimelineBlock id="timeline1" />
+      <TimelineBlock id="timeline2" />
+      <TimelineBlock id="timeline3" />
+    </div>
+  );
+};
+
+export default threeBlocksPage;
+```
+
+## Установка и запуск
+
+## Доступные скрипты
+
+## Архитектура проекта
+
+### Структура директорий
+
+### Модульная архитектура
+
+### Container-presenter pattern
+
