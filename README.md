@@ -139,9 +139,9 @@ serve -s build
 #### Подключение шрифта Bebas Neue:
 
 1. 1-ый способ Подключения шрифта Bebas Neue - в index.html:
-   ```html
- <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&display=swap" rel="stylesheet">
-   ```
+
+ `<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&display=swap" rel="stylesheet">`
+ 
 2. 2-ой способ Подключения шрифта Bebas Neue - через import в CSS-файл напрямую:
    `@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&display=swap');`
 
