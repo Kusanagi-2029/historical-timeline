@@ -98,7 +98,7 @@ serve -s build
 > [!CAUTION]
 > Это неотвратимая операция `eject`!
 
-### DEMO
+## DEMO
 
 ### Видео
 
