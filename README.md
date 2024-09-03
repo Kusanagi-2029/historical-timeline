@@ -53,8 +53,8 @@
 Вам понадобится:
 1) **Node.js:**
 - https://nodejs.org/en
-2) - **Yarn:**
-https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable
+2) **Yarn:**
+- https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable
 или
 `npm install --global yarn`
 
