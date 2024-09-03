@@ -172,7 +172,7 @@ serve -s build
 
 `touch-action: manipulation;`
 
-#### Подключение шрифта Bebas Neue:
+#### Подключение шрифта на примере Bebas Neue:
 
 1. 1-ый способ Подключения шрифта Bebas Neue - в index.html:
 
