@@ -7,6 +7,7 @@
   - [DEMO](#demo)
     - [Видео](#видео)
     - [Изолированность](#изолированность)
+    - [Store](#store)
     - [Анимация](#анимация)
       - [TimelineContainer](#timelinecontainer)
       - [updateDatesWithAnimation](#updatedateswithanimation)
@@ -47,6 +48,7 @@
 - JQuery
 - Bootstrap, Tailwind и т.п.
 - Библиотеки UI-компонентов - MaterialUI, AntDesign и т.п.
+- State-менеджеры ввиду их избыточности в данном кейсе
 
 ## Установка и запуск
 
@@ -260,9 +262,41 @@ const threeBlocksPage: React.FC = () => {
 
 export default threeBlocksPage;
 ```
-Ключевым здесь является передача id - так определяется конкретный временной период конкретного блока:
+Ключевым здесь является передача **id** - так определяется конкретный временной период конкретного блока:
 ```tsx
   const [activePeriod, setActivePeriod] = useState<number>(() => loadFromStorage(`activePeriod_${id}`) || 1);
+```
+
+### Store
+1) State-менеджеры не были подключены в проект ввиду их избыточности в данном кейсе.
+2) Однако управление состоянием осуществляется через **localStorage** и **id**, присваиваемый компоненту **TimelineBlock** (для отделения логики выбора временного отрезка):
+
+**src/storage/storage.ts:**
+```ts
+/**
+ * Сохраняет значение в локальное хранилище по указанному ключу.
+ * Данные сериализуются в JSON-строку перед сохранением.
+ */
+export const saveToStorage = (key: string, value: unknown) => {
+  localStorage.setItem(key, JSON.stringify(value));
+};
+
+/**
+ * Загружает значение из локального хранилища по указанному ключу.
+ * Если значение не найдено, возвращает null.
+ * Данные десериализуются из JSON-строки после загрузки.
+ */
+export const loadFromStorage = (key: string) => {
+  const value = localStorage.getItem(key);
+  return value ? JSON.parse(value) : null;
+};
+```
+
+**src/modules/TimelineBlock/TimelineBlockWrapper/TimelineBlockWrapper.tsx/TimelineBlock:**
+```ts
+  useEffect(() => {
+    saveToStorage(`activePeriod_${id}`, activePeriod);
+  }, [activePeriod, id]);
 ```
 
 ## Архитектура проекта
@@ -418,3 +452,4 @@ _P.s. Стараются понижать **Coupling** и повышать **Coh
 
 > [!TIP]
 > Этот подход обеспечивает хорошую организацию и гибкость для масштабирования проекта, делая его более устойчивым к изменениям и лёгким для поддержки.
+
