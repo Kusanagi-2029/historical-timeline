@@ -138,10 +138,12 @@ serve -s build
 
 #### Подключение шрифта Bebas Neue:
 
-1. 1-ый способ Подключения шрифта Bebas Neue - в index.html
+1. 1-ый способ Подключения шрифта Bebas Neue - в index.html:
+   ```html
  <!-- <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&display=swap" rel="stylesheet">
 -->
-2. 2-ой способ Подключения шрифта Bebas Neue - через import в CSS-файл напрямую
+   ```
+2. 2-ой способ Подключения шрифта Bebas Neue - через import в CSS-файл напрямую:
    `@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&display=swap');`
 
 3. 3-ий способ Подключения шрифта Bebas Neue - через import в CSS/SCSS-файл и подключение его к входной точке проекта - `src/index.js` или `src/App.js`:
@@ -153,7 +155,7 @@ serve -s build
    ```tsx
    import './shared/styles/fonts.scss';
 
-   // Замените на путь к вашему файлу стилей
+   // Заменить на путь к файлу стилей
    ```
 
 4. 4-ый способ Подключения шрифта Bebas Neue - импорт из другого css/scss-файла
@@ -163,7 +165,7 @@ serve -s build
    ```tsx
    import '@fontsource/bebas-neue';
 
-   // Импортируйте шрифт в ваш JS/JSX файл
+   // Импортировать шрифт в ваш JS/JSX файл
    ```
 
 5. 5-ый способ - прямой импорт из другого CSS|SCSS;
@@ -172,13 +174,12 @@ serve -s build
    Но должны быть настроены Webpack и tsconfig:
 
 ```js
-// webpack.config.js
+// Пример webpack.config.js
 module.exports = {
   module: {
     rules: [
       {
-        test: /\.scss$/,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
+        ...
       },
     ],
   },
@@ -186,16 +187,13 @@ module.exports = {
 ```
 
 ```js
-// tsconfig.json
+// Пример tsconfig.json
 {
   "compilerOptions": {
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": ["*"]
+     ...
     }
   }
 }
-
 ```
 
 ### Видео
@@ -235,8 +233,150 @@ export default threeBlocksPage;
 ## Архитектура проекта
 
 ### Структура директорий
+Структура директорий проекта представлена на следующих скриншотах:
+![Архитектура 1](https://github.com/user-attachments/assets/99587901-9711-4c77-912a-ec382a63a038)
+![Архитектура 2](https://github.com/user-attachments/assets/39b46730-c218-472f-b111-bdb33d8c3e94)
+![Архитектура 3](https://github.com/user-attachments/assets/84ea40e4-00b6-4394-a95d-4a6f3b1b1b9e)
 
 ### Модульная архитектура
 
-### Container-presenter pattern
+1. **Функциональная модульность**: Код разбивается на модули, где каждый модуль представляет собой независимую функциональность. Это позволяет легче поддерживать и расширять функционал приложения.
+2. **Изоляция компонентов**: Компоненты и функции, относящиеся к определенной функциональной области, сгруппированы вместе. Это помогает избежать путаницы между различными частями кода.
+   - **Пример** - Осуществляется инкапсуляция модуля через **`index.ts`** - **_PUBLIC API_**:
+       - Внешнее приложение знает о модуле только то, что ему надо знать, принимает только то, что стоит принимать. Не мутирует данные и не имеет к ним доступа извне модуля.
+       - Модуль легче тестировать и изменять, а также другие модули легче внедрять в проект/удалять из проекта.
+3. **Масштабируемость**: Упрощает добавление нового функционала, так как новые функции добавляются в отдельные модули, не затрагивая существующие.
+4. **Упрощенное тестирование**: Модули можно тестировать отдельно, что делает процесс тестирования более управляемым и эффективным.
 
+#### Преимущества подхода
+
+- **Четкая структура**: Позволяет легко ориентироваться в коде и быстро находить нужные компоненты и модули.
+- **Модульность**: Облегчает масштабирование и добавление новых функций.
+- **Упрощенное тестирование и поддержка**: Каждый модуль можно тестировать и поддерживать отдельно от других.
+
+### Container-presenter pattern
+1) Пример - компонент **TimelineContainer (Container)** - имеет свой локальный state и определённую логику, состоит из компонентов, вынесенных в отдельные файлы для лучшего разделения логики и UI.
+Таким образом, компонент **TimelineContainer** разделяет логику и UI-часть, делегируя её подробную часть другим компонентам: **TimelinePresenter** и **TimelineDots**:
+```tsx
+/**
+ * Компонент контейнера для шкалы временных отрезков.
+ */
+...
+const TimelineContainer: React.FC<TimelineContainerProps> = ({ activePeriod, timelineData, onPeriodChange }) => {
+  const circleRef = useRef<SVGSVGElement>(null);
+  const circleRefs = useRef<(SVGCircleElement | null)[]>([]);
+  const textRefs = useRef<(SVGTextElement | null)[]>([]);
+//... Локальное состояние компонента-контейнера
+ const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const isMobile = useDeviceDetect();
+  const [startDate, setStartDate] = useState<string>('2000');
+  const [endDate, setEndDate] = useState<string>('2000');
+//...
+  /**
+   * Обработчик события наведения мыши на кружочка.
+   */
+  const handleMouseEnter = (index: number) => {
+    if (index + 1 !== activePeriod) {
+      setHoveredIndex(index);
+      if (circleRefs.current[index]) {
+        circleRefs.current[index].setAttribute('r', '16');
+      }
+      if (textRefs.current[index]) {
+        textRefs.current[index].style.opacity = '1';
+      }
+    }
+  };
+//... Делегирование отрисовки UI и передача логики через props дочерним компонентам
+  return (
+    <TimelinePresenter
+      periodData={periodData}
+      startDate={startDate}
+      endDate={endDate}
+      isMobile={isMobile}
+      circleRef={circleRef}
+    >
+      <TimelineDots
+        totalPeriods={timelineData.length}
+        activePeriod={activePeriod}
+        hoveredIndex={hoveredIndex}
+        onPeriodChange={onPeriodChange}
+        circleRefs={circleRefs}
+        textRefs={textRefs}
+        handleMouseEnter={handleMouseEnter}
+        handleMouseLeave={handleMouseLeave}
+        isMobile={isMobile}
+      />
+    </TimelinePresenter>
+  );
+};
+//... 
+```
+2) В свою очередь, компонент **TimelinePresenter (presenter)** принимает данные от **TimelineContainer (Container)** через пропсы и возвращает блок из общих переиспользуемых UI-компонентов:
+```tsx
+//...
+/**
+ * Компонент для отображения шкалы временных отрезков.
+ */
+const TimelinePresenter: React.FC<TimelinePresenterProps> = ({
+  periodData,
+  startDate,
+  endDate,
+  isMobile,
+  circleRef,
+  children,
+}) => {
+  return (
+    <div className={!isMobile ? styles.timeline : styles.timelineMobile}>
+      <ThemeDisplay
+        theme={periodData.theme}
+        isMobile={isMobile}
+        themeContainerDesktop={styles.themeContainer}
+        themeContainerMobile={styles.themeContainerMobile}
+      />
+      <DateDisplayTimeline
+        startDate={startDate}
+        endDate={endDate}
+        isMobile={isMobile}
+        classNameContainerDesktop={styles.dateContainer}
+        classNameContainerMobile={styles.dateContainerMobile}
+        classNameStartDateDesktop={styles.startDate}
+        classNameStartDateMobile={styles.startDateMobile}
+        classNameEndDate={styles.endDate}
+        classNameEndDateMobile={styles.endDateMobile}
+      />
+      <div className={!isMobile ? styles.center : styles.centerMobile}>
+        {!isMobile && (
+          <svg width="400" height="400" viewBox="-200 -200 400 400" ref={circleRef}>
+            <circle r="160" fill="none" stroke="#ccc" strokeWidth="1" />
+            {children} {/* Отображаем TimelineDots здесь */}
+          </svg>
+        )}
+        {isMobile && <div className={styles.mobileDotsContainer}>{children}</div>}
+      </div>
+    </div>
+  );
+};
+//...
+```
+3) Самый общий shared UI-компонент отображения темы представлен в виде атомарного(неделимого) компонента, который, в свою очередь, является **(presenter)** для компонента **TimelinePresenter**, выступающим в качестве **Container** относительно данного **ThemeDisplay**, принимающим значения и функцию в виде пропсов:
+```tsx
+//...
+const ThemeDisplay: React.FC<ThemeDisplayProps> = ({
+  theme,
+  isMobile,
+  themeContainerDesktop,
+  themeContainerMobile,
+}) => {
+  return <h2 className={!isMobile ? themeContainerDesktop : themeContainerMobile}>{theme || 'Нет темы'}</h2>;
+};
+//...
+```
+
+Таким образом, понижается **Coupling (зацепление, зависимость одних модулей/компонент/функций/т.п. от других)** и повышается **Cohesion (связанность, способность модулей/компонент/функций/т.п. выполнять одну и ту же задачу/функцию)**.
+
+_P.s. Стараются понижать **Coupling** и повышать **Cohesion**._
+
+![image](https://github.com/user-attachments/assets/5bd87fb3-be35-4311-abb3-faf79d47194a)
+
+> [!TIP]
+> Этот подход обеспечивает хорошую организацию и гибкость для масштабирования проекта, делая его более устойчивым к изменениям и лёгким для поддержки.
