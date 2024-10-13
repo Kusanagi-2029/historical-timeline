@@ -1,3 +1,5 @@
+import React from 'react';
+
 import SwiperType from 'swiper';
 import { SwiperProps } from 'swiper/react';
 

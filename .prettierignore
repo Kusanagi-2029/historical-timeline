@@ -2,6 +2,7 @@
 .cache/
 # Игнорировать файлы конфигурации и скрипты сборки
 tsconfig.json
+.prettierrc
 # Игнорировать все файлы в директориях node_modules, build, .idea
 node_modules/
 build
